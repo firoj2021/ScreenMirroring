@@ -79,6 +79,13 @@ public class SinkActivity extends AppCompatActivity {
         mLogger = new TextLogger();
 
         mFpsTextView = (TextView) findViewById(R.id.fpsTextView);
+        mFpsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent in = new Intent(SinkActivity.this,SinkTcpActivity.class);
+                startActivity(in);
+            }
+        });
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {

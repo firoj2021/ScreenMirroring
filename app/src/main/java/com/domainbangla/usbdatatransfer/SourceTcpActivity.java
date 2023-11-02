@@ -30,6 +30,8 @@ public class SourceTcpActivity extends Activity {
 
     private DisplaySourceService mDisplaySourceService;
 
+    public static String ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +48,9 @@ public class SourceTcpActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if (!mConnected) {
-//                    connect(mAddressText.getText().toString());
-                    connect("192.168.0.103");
+                    ip = mAddressText.getText().toString();
+                    connect(ip);
+ //                   connect("192.168.0.103");
                 } else {
                     disconnect();
                 }
@@ -57,8 +60,10 @@ public class SourceTcpActivity extends Activity {
             @Override
             public void onClick(View view) {
                 disconnect();
-                Intent in = new Intent(SourceTcpActivity.this,MediaProjectionActivity.class);
-                startActivity(in);
+                if (ip != null && ip != ""){
+                    Intent in = new Intent(SourceTcpActivity.this,MediaProjectionActivity.class);
+                    startActivity(in);
+                }
             }
         });
     }

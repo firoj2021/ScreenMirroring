@@ -88,6 +88,7 @@ public class SinkActivity extends AppCompatActivity {
         });
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        mSurfaceView.setVisibility(View.GONE);
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

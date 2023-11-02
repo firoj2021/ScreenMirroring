@@ -20,12 +20,13 @@ import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 
 public class SinkTcpActivity extends Activity {
     private static final String TAG = "SinkTcpActivity";
 
-    private TextView mLogTextView;
+    private TextView mLogTextView,fpsTextView;
     private SurfaceView mSurfaceView;
     private Logger mLogger;
 
@@ -41,9 +42,12 @@ public class SinkTcpActivity extends Activity {
 
         setContentView(R.layout.activity_sink);
 
+        fpsTextView = (TextView) findViewById(R.id.fpsTextView);
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
+
+        fpsTextView.setVisibility(View.GONE);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
     }

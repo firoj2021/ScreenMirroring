@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <EditText android:id="@+id/address"
-            android:hint="TCP IP"
+            android:hint="Enter IP"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
@@ -23,7 +23,7 @@
             android:layout_weight="1"
             android:clickable="true"
             android:focusable="true"
-            android:text="Check" />
+            android:text="Connect" />
     </LinearLayout>
 
 

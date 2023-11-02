@@ -39,12 +39,13 @@ public class MediaProjectionActivity extends Activity {
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mAddressText = (EditText) findViewById(R.id.address);
         mButton = (Button) findViewById(R.id.btnConnect);
+        mButton.setText("Start Mirroring");
+        mAddressText.setText(SourceTcpActivity.ip);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!mConnected) {
-                    //mSinkAddress = mAddressText.getText().toString();
-                    mSinkAddress ="192.168.0.102";
+                    mSinkAddress = mAddressText.getText().toString();
                     startProjection();
                 }
             }

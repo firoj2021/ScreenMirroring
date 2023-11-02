@@ -31,54 +31,54 @@
 
 
         <!--        Source-->
-<!--        <activity-->
-<!--            android:name=".SourceActivity"-->
-<!--            android:exported="true"-->
-<!--            android:label="Source TCP">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+        <activity
+            android:name=".SourceActivity"
+            android:exported="true"
+            android:label="Source TCP">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
 
-<!--            <meta-data-->
-<!--                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"-->
-<!--                android:resource="@xml/device_filter" />-->
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name=".SourceTcpActivity"-->
-<!--            android:label="Source Tcp">-->
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+        <activity
+            android:name=".SourceTcpActivity"
+            android:label="Source Tcp">
 
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name=".MediaProjectionActivity"-->
-<!--            android:label="MediaProjection">-->
+        </activity>
+        <activity
+            android:name=".MediaProjectionActivity"
+            android:label="MediaProjection">
 
-<!--        </activity>-->
+        </activity>
 
 <!--                        Sink-->
 
-                        <activity
-                            android:name=".SinkActivity"
-                            android:exported="true">
-                            <intent-filter>
-                                <action android:name="android.intent.action.MAIN" />
+<!--                        <activity-->
+<!--                            android:name=".SinkActivity"-->
+<!--                            android:exported="true">-->
+<!--                            <intent-filter>-->
+<!--                                <action android:name="android.intent.action.MAIN" />-->
 
-                                <category android:name="android.intent.category.LAUNCHER" />
-                            </intent-filter>
-                            <intent-filter>
-                                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
-                            </intent-filter>
-                            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                                android:resource="@xml/device_filter" />
-                        </activity>
-                        <activity
-                            android:name=".SinkTcpActivity"
-                            android:label="Media Project">
-                        </activity>
+<!--                                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--                            </intent-filter>-->
+<!--                            <intent-filter>-->
+<!--                                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />-->
+<!--                            </intent-filter>-->
+<!--                            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"-->
+<!--                                android:resource="@xml/device_filter" />-->
+<!--                        </activity>-->
+<!--                        <activity-->
+<!--                            android:name=".SinkTcpActivity"-->
+<!--                            android:label="Media Project">-->
+<!--                        </activity>-->
 
         <service
             android:name=".ScreenMirrorService"

@@ -153,7 +153,7 @@ public class ScreenMirrorService extends Service {
         mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
 
         startServices();
-        mTransport.startReading();
+       // mTransport.startReading();
         mLogger.log("Connected.");
         mMediaProjectionService = new MediaProjectionService(mContext, mTransport, mMediaProjection);
         mMediaProjectionService.start();

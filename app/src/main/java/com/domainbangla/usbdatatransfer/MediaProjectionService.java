@@ -37,7 +37,6 @@ public class MediaProjectionService extends Service {
     @Override
     public void start() {
         super.start();
-
         getLogger().log("Sending MSG_QUERY.");
         getTransport().sendMessage(Protocol.DisplaySinkService.ID,
                 Protocol.DisplaySinkService.MSG_QUERY, null);

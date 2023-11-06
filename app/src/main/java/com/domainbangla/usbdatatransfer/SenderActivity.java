@@ -1,17 +1,25 @@
 package com.domainbangla.usbdatatransfer;
 
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
+import android.media.MediaCodec;
+import android.media.MediaCodecInfo;
+import android.media.MediaFormat;
+import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +29,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.domainbangla.usbdatatransfer.common.Logger;
 import com.domainbangla.usbdatatransfer.presentation.DemoPresentation;
+
+import java.io.IOException;
 
 public class SenderActivity extends AppCompatActivity {
 
@@ -36,12 +46,12 @@ public class SenderActivity extends AppCompatActivity {
     private AccessoryReceiver mReceiver;
     private TextView mLogTextView;
     private Logger mLogger;
-    private Presenter mPresenter;
+   // private Presenter mPresenter;
 
     private boolean mConnected;
     private UsbAccessory mAccessory;
 
-    private DisplaySourceService mDisplaySourceService;
+   // private DisplaySourceService mDisplaySourceService;
 
     public static UsbAccessoryStreamTransport mTransport;
 
@@ -63,7 +73,7 @@ public class SenderActivity extends AppCompatActivity {
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
-        mPresenter = new Presenter();
+       // mPresenter = new Presenter();
 
         mLogger.log("Waiting for accessory display sink to be attached to USB...");
 
@@ -107,9 +117,17 @@ public class SenderActivity extends AppCompatActivity {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startProjection();
+                if (mConnected && mTransport != null){
+                    startProjection();
+                }else {
+                    showToast("Please connect first");
+                }
             }
         });
+    }
+
+    public void showToast(String msg){
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 
     private void startProjection() {
@@ -120,28 +138,36 @@ public class SenderActivity extends AppCompatActivity {
 
 
     private void stopProjection() {
-        startService(ScreenMirrorService.getStopIntent(this));
+        if (isMyServiceRunning(ScreenMirrorService.class)){
+            startService(ScreenMirrorService.getStopIntent(this));
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != PERMISSION_CODE) {
-            return;
-        }
-        if (resultCode != RESULT_OK) {
-            Toast.makeText(this,
-                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+        if (requestCode != PERMISSION_CODE && resultCode != RESULT_OK) {
+            showToast("Screen Cast Permission Denied");
             return;
         }
 
-        startService(ScreenMirrorService.getStartIntent(this, resultCode, data));
+        //stop first
+        stopServices();
 
-//        mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
-//        if (mMediaProjection != null) {
-//            mMediaProjection.registerCallback(mMediaProjectionCallback, null);
-//            connect();
-//        }
+        //Then start again
+        if (!isMyServiceRunning(ScreenMirrorService.class)){
+            startService(ScreenMirrorService.getStartIntent(this, resultCode, data));
+        }
 
 
     }
@@ -205,12 +231,12 @@ public class SenderActivity extends AppCompatActivity {
         mConnected = true;
         mAccessory = accessory;
         mTransport = new UsbAccessoryStreamTransport(mLogger, fd);
-        startServices();
-        mTransport.startReading();
+       // startServices();
+        mTransport.startReading();//ToDo(), need to check later
     }
 
     private void disconnect() {
-        stopServices();
+       // stopServices();
         mConnected = false;
         mAccessory = null;
         if (mTransport != null) {
@@ -219,15 +245,15 @@ public class SenderActivity extends AppCompatActivity {
     }
 
     private void startServices() {
-        mDisplaySourceService = new DisplaySourceService(this, mTransport, mPresenter);
-        mDisplaySourceService.start();
+//        mDisplaySourceService = new DisplaySourceService(this, mTransport, mPresenter);
+//        mDisplaySourceService.start();
     }
 
     private void stopServices() {
-        if (mDisplaySourceService != null) {
-            mDisplaySourceService.stop();
-            mDisplaySourceService = null;
-        }
+//        if (mDisplaySourceService != null) {
+//            mDisplaySourceService.stop();
+//            mDisplaySourceService = null;
+//        }
     }
 
     class AccessoryReceiver extends BroadcastReceiver {

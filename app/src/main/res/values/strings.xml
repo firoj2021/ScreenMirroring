@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">USBDataTransfer</string>
+    <string name="app_name">XRSenseMirror</string>
     <string name="button_connect">Connect</string>
     <string name="button_disconnect">Disconnect</string>
     <string name="start_recording">Start Recording</string>

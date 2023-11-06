@@ -145,9 +145,6 @@ public class MediaProjectionService extends Service {
             format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
             format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
             format.setInteger("prepend-sps-pps-to-idr-frames",1);
-            /*format.setInteger("intra-refresh-mode",1);
-            int mbs = (((mWidth + 15) / 16) * ((mHeight + 15) / 16) * 10) / 100;
-            format.setInteger("intra-refresh-CIR-mbs", mbs);*/
             MediaCodec codec;
             try {
                 codec = MediaCodec.createEncoderByType("video/avc");
@@ -188,7 +185,7 @@ public class MediaProjectionService extends Service {
                             Protocol.DisplaySinkService.MSG_CONTENT, buffer);
                     codec.releaseOutputBuffer(index, false);
                 } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                    getLogger().log("Codec dequeue buffer timed out.");
+                   // getLogger().log("Codec dequeue buffer timed out.");
                 }
                 try {
                     Thread.sleep(5);

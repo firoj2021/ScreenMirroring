@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import com.domainbangla.usbdatatransfer.common.Logger;
-import com.domainbangla.usbdatatransfer.presentation.DemoPresentation;
 
 import java.util.Objects;
 
@@ -31,7 +30,6 @@ public class ScreenMirrorService extends Service {
     private static final String ACTION = "ACTION";
     private static final String START = "START";
     private static final String STOP = "STOP";
-    private static final String SCREENCAP_NAME = "screencap";
 
     private Context mContext;
 
@@ -133,52 +131,13 @@ public class ScreenMirrorService extends Service {
         return START_NOT_STICKY;
     }
 
-    private DisplaySourceService mDisplaySourceService;
-
-    private void startServices() {
-//        mDisplaySourceService = new DisplaySourceService(this, mTransport, new Presenter());
-//        mDisplaySourceService.start();
-    }
-
-    private void stopService() {
-//        if (mDisplaySourceService != null) {
-//            mDisplaySourceService.stop();
-//            mDisplaySourceService = null;
-//        }
-    }
-
     private void startProjection(int resultCode, Intent data) {
         mLogger.log("resultCode:"+resultCode);
         mProjectionManager = (MediaProjectionManager)getSystemService(MEDIA_PROJECTION_SERVICE);
         mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
-
-        startServices();
-       // mTransport.startReading();
-        mLogger.log("Connected.");
         mMediaProjectionService = new MediaProjectionService(mContext, mTransport, mMediaProjection);
         mMediaProjectionService.start();
 
-    }
-
-    class Presenter implements DisplaySourceService.Callbacks {
-        private DemoPresentation mPresentation;
-
-        @Override
-        public void onDisplayAdded(Display display) {
-            mLogger.log("TCP display added");
-            mPresentation = new DemoPresentation(mContext, display, mLogger);
-            mPresentation.show();
-        }
-
-        @Override
-        public void onDisplayRemoved(Display display) {
-            mLogger.log("TCP display removed: ");
-
-            if (mPresentation != null) {
-                mPresentation.dismiss();
-                mPresentation = null;
-            }
-        }
     }
 
     private void stopProjection() {
@@ -188,7 +147,6 @@ public class ScreenMirrorService extends Service {
                 public void run() {
                     if (mMediaProjection != null) {
                         mMediaProjection.stop();
-                        stopService();
                         if (mTransport != null) {
                             mTransport.close();
                             mTransport = null;

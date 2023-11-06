@@ -21,12 +21,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Display;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.domainbangla.usbdatatransfer.R;
@@ -46,11 +42,6 @@ public final class DemoPresentation extends Presentation {
 
     private GLSurfaceView mSurfaceView;
     private CubeRenderer mRenderer;
-    //private Button mExplodeButton;
-
-    private ImageView imageView;
-
-    int i = 0;
 
     public DemoPresentation(Context context, Display display, Logger logger) {
         super(context, display);
@@ -73,18 +64,8 @@ public final class DemoPresentation extends Presentation {
         mRenderer = new CubeRenderer(false);
 
         mSurfaceView = (GLSurfaceView) findViewById(R.id.surface_view);
-        imageView = (ImageView) findViewById(R.id.imageView);
-        imageView.setImageResource(R.drawable.logo);
         mSurfaceView.setRenderer(mRenderer);
 
-        // Add a button.
-//        mExplodeButton = (Button)findViewById(R.id.explode_button);
-//        mExplodeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mRenderer.explode();
-//            }
-//        });
     }
 
     @Override

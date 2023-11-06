@@ -6,20 +6,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.hardware.display.DisplayManager;
-import android.hardware.display.VirtualDisplay;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
-import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaFormat;
-import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
-import android.view.Display;
-import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -28,9 +20,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.domainbangla.usbdatatransfer.common.Logger;
-import com.domainbangla.usbdatatransfer.presentation.DemoPresentation;
-
-import java.io.IOException;
 
 public class SenderActivity extends AppCompatActivity {
 
@@ -39,26 +28,19 @@ public class SenderActivity extends AppCompatActivity {
     private static final String ACTION_USB_ACCESSORY_PERMISSION =
             "com.domainbangla.usbdatatransfer.ACTION_USB_ACCESSORY_PERMISSION";
 
-    private static final String MANUFACTURER = "Android";
-    private static final String MODEL = "Accessory Display";
-
     private UsbManager mUsbManager;
     private AccessoryReceiver mReceiver;
     private TextView mLogTextView;
     private Logger mLogger;
-   // private Presenter mPresenter;
 
     private boolean mConnected;
     private UsbAccessory mAccessory;
-
-   // private DisplaySourceService mDisplaySourceService;
 
     public static UsbAccessoryStreamTransport mTransport;
 
     private Button btnConnect,btnShare;
 
-    private MediaProjectionManager mProjectionManager;
-    private static final int PERMISSION_CODE = 1;
+    private static final int PERMISSION_CODE = 129;
 
 
     @Override
@@ -73,7 +55,6 @@ public class SenderActivity extends AppCompatActivity {
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
-       // mPresenter = new Presenter();
 
         mLogger.log("Waiting for accessory display sink to be attached to USB...");
 
@@ -112,8 +93,6 @@ public class SenderActivity extends AppCompatActivity {
             }
         });
 
-        mProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
-
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,10 +103,6 @@ public class SenderActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    public void showToast(String msg){
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 
     private void startProjection() {
@@ -162,34 +137,12 @@ public class SenderActivity extends AppCompatActivity {
         }
 
         //stop first
-        stopServices();
+        //stopProjection();
 
         //Then start again
         if (!isMyServiceRunning(ScreenMirrorService.class)){
             startService(ScreenMirrorService.getStartIntent(this, resultCode, data));
         }
-
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mReceiver != null){
-            unregisterReceiver(mReceiver);
-        }
-        stopProjection();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     private void onAccessoryAttached(UsbAccessory accessory) {
@@ -227,33 +180,18 @@ public class SenderActivity extends AppCompatActivity {
             return;
         }
 
-        // All set.
         mConnected = true;
         mAccessory = accessory;
         mTransport = new UsbAccessoryStreamTransport(mLogger, fd);
-       // startServices();
-        mTransport.startReading();//ToDo(), need to check later
+        mTransport.startReading();
     }
 
     private void disconnect() {
-       // stopServices();
         mConnected = false;
         mAccessory = null;
         if (mTransport != null) {
             mTransport = null;
         }
-    }
-
-    private void startServices() {
-//        mDisplaySourceService = new DisplaySourceService(this, mTransport, mPresenter);
-//        mDisplaySourceService.start();
-    }
-
-    private void stopServices() {
-//        if (mDisplaySourceService != null) {
-//            mDisplaySourceService.stop();
-//            mDisplaySourceService = null;
-//        }
     }
 
     class AccessoryReceiver extends BroadcastReceiver {
@@ -291,24 +229,17 @@ public class SenderActivity extends AppCompatActivity {
         }
     }
 
+    public void showToast(String msg){
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
 
-    class Presenter implements DisplaySourceService.Callbacks {
-        private DemoPresentation mPresentation;
-
-        @Override
-        public void onDisplayAdded(Display display) {
-            mLogger.log("Accessory display added: " + display);
-            mPresentation = new DemoPresentation(SenderActivity.this, display, mLogger);
-            mPresentation.show();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mReceiver != null){
+            unregisterReceiver(mReceiver);
         }
-
-        @Override
-        public void onDisplayRemoved(Display display) {
-            if (mPresentation != null) {
-                mPresentation.dismiss();
-                mPresentation = null;
-            }
-        }
+        stopProjection();
     }
 
 }

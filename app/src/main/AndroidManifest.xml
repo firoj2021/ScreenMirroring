@@ -25,12 +25,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.USBDataTransfer"
         tools:targetApi="31">
-<!--        <activity-->
-<!--            android:name=".SenderActivity"-->
-<!--            android:exported="false" />-->
         <activity
-            android:name=".SinkActivity"
+            android:name=".SenderActivity"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,7 +1,5 @@
 package com.domainbangla.usbdatatransfer;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
+import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
@@ -16,6 +15,9 @@ import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.domainbangla.usbdatatransfer.common.Logger;
 import com.domainbangla.usbdatatransfer.presentation.DemoPresentation;
@@ -41,9 +43,12 @@ public class SenderActivity extends AppCompatActivity {
 
     private DisplaySourceService mDisplaySourceService;
 
-    private UsbAccessoryStreamTransport mTransport;
+    public static UsbAccessoryStreamTransport mTransport;
 
-    private Button btnConnect;
+    private Button btnConnect,btnShare;
+
+    private MediaProjectionManager mProjectionManager;
+    private static final int PERMISSION_CODE = 1;
 
 
     @Override
@@ -54,6 +59,7 @@ public class SenderActivity extends AppCompatActivity {
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         btnConnect = (Button) findViewById(R.id.btnConnect);
+        btnShare = (Button) findViewById(R.id.btnShare);
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
@@ -95,7 +101,51 @@ public class SenderActivity extends AppCompatActivity {
                 }
             }
         });
+
+        mProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //startProjection();
+            }
+        });
     }
+
+    private void startProjection() {
+        MediaProjectionManager mProjectionManager =
+                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        startActivityForResult(mProjectionManager.createScreenCaptureIntent(), PERMISSION_CODE);
+    }
+
+
+    private void stopProjection() {
+        startService(ScreenMirrorService.getStopIntent(this));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != PERMISSION_CODE) {
+            return;
+        }
+        if (resultCode != RESULT_OK) {
+            Toast.makeText(this,
+                    "Screen Cast Permission Denied", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        startService(ScreenMirrorService.getStartIntent(this, resultCode, data));
+
+//        mMediaProjection = mProjectionManager.getMediaProjection(resultCode, data);
+//        if (mMediaProjection != null) {
+//            mMediaProjection.registerCallback(mMediaProjectionCallback, null);
+//            connect();
+//        }
+
+
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -103,6 +153,7 @@ public class SenderActivity extends AppCompatActivity {
         if (mReceiver != null){
             unregisterReceiver(mReceiver);
         }
+        stopProjection();
     }
 
     @Override
@@ -177,11 +228,6 @@ public class SenderActivity extends AppCompatActivity {
             mDisplaySourceService.stop();
             mDisplaySourceService = null;
         }
-    }
-
-    private static boolean isSink(UsbAccessory accessory) {
-        return MANUFACTURER.equals(accessory.getManufacturer())
-                && MODEL.equals(accessory.getModel());
     }
 
     class AccessoryReceiver extends BroadcastReceiver {

@@ -65,9 +65,6 @@ public final class DemoPresentation extends Presentation {
         // Set up the surface view for visual interest.
         mRenderer = new CubeRenderer(false);
 
-
-
-
         mSurfaceView = (GLSurfaceView)findViewById(R.id.surface_view);
         mSurfaceView.setRenderer(mRenderer);
 

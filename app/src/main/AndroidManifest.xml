@@ -29,7 +29,7 @@
 <!--            android:name=".SenderActivity"-->
 <!--            android:exported="false" />-->
         <activity
-            android:name=".SenderActivity"
+            android:name=".SinkActivity"
             android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>

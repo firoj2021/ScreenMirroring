@@ -43,7 +43,7 @@ public final class DemoPresentation extends Presentation {
 
     private GLSurfaceView mSurfaceView;
     private CubeRenderer mRenderer;
-    private Button mExplodeButton;
+    //private Button mExplodeButton;
 
     public DemoPresentation(Context context, Display display, Logger logger) {
         super(context, display);
@@ -64,17 +64,21 @@ public final class DemoPresentation extends Presentation {
 
         // Set up the surface view for visual interest.
         mRenderer = new CubeRenderer(false);
+
+
+
+
         mSurfaceView = (GLSurfaceView)findViewById(R.id.surface_view);
         mSurfaceView.setRenderer(mRenderer);
 
         // Add a button.
-        mExplodeButton = (Button)findViewById(R.id.explode_button);
-        mExplodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mRenderer.explode();
-            }
-        });
+//        mExplodeButton = (Button)findViewById(R.id.explode_button);
+//        mExplodeButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mRenderer.explode();
+//            }
+//        });
     }
 
     @Override

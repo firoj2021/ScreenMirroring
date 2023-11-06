@@ -21,7 +21,9 @@ import android.widget.TextView;
 import android.content.Context;
 
 import com.domainbangla.usbdatatransfer.common.Logger;
+
 import android.hardware.usb.UsbDeviceConnection;
+
 import java.nio.ByteBuffer;
 import java.util.Map;
 
@@ -72,7 +74,7 @@ public class SinkActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sink);
-        mUsbManager = (UsbManager)getSystemService(Context.USB_SERVICE);
+        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         mLogTextView = (TextView) findViewById(R.id.logTextView);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
@@ -117,8 +119,9 @@ public class SinkActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unregisterReceiver(mReceiver);
+        if (mReceiver != null) {
+            unregisterReceiver(mReceiver);
+        }
     }
 
     private void onDeviceAttached(UsbDevice device) {
@@ -157,94 +160,98 @@ public class SinkActivity extends AppCompatActivity {
             mLogger.logError("Could not obtain device connection.");
             return;
         }
-        UsbInterface iface = device.getInterface(0);
-        UsbEndpoint controlEndpoint = iface.getEndpoint(0);
-        if (!conn.claimInterface(iface, true)) {
-            mLogger.logError("Could not claim interface.");
-            return;
-        }
-        try {
-            // If already in accessory mode, then connect to the device.
-            if (isAccessory(device)) {
-                mLogger.log("Connecting to accessory...");
-
-                int protocolVersion = getProtocol(conn);
-                if (protocolVersion < 1) {
-                    mLogger.logError("Device does not support accessory protocol.");
+        if (device.getInterfaceCount() > 0) {
+            UsbInterface iface = device.getInterface(0);
+            if (iface.getEndpointCount() > 0) {
+                UsbEndpoint controlEndpoint = iface.getEndpoint(0);
+                if (!conn.claimInterface(iface, true)) {
+                    mLogger.logError("Could not claim interface.");
                     return;
                 }
-                mLogger.log("Protocol version: " + protocolVersion);
+                try {
+                    // If already in accessory mode, then connect to the device.
+                    if (isAccessory(device)) {
+                        mLogger.log("Connecting to accessory...");
 
-                // Setup bulk endpoints.
-                UsbEndpoint bulkIn = null;
-                UsbEndpoint bulkOut = null;
-                for (int i = 0; i < iface.getEndpointCount(); i++) {
-                    UsbEndpoint ep = iface.getEndpoint(i);
-                    if (ep.getDirection() == UsbConstants.USB_DIR_IN) {
-                        if (bulkIn == null) {
-                            mLogger.log(String.format("Bulk IN endpoint: %d", i));
-                            bulkIn = ep;
+                        int protocolVersion = getProtocol(conn);
+                        if (protocolVersion < 1) {
+                            mLogger.logError("Device does not support accessory protocol.");
+                            return;
                         }
+                        mLogger.log("Protocol version: " + protocolVersion);
+
+                        // Setup bulk endpoints.
+                        UsbEndpoint bulkIn = null;
+                        UsbEndpoint bulkOut = null;
+                        for (int i = 0; i < iface.getEndpointCount(); i++) {
+                            UsbEndpoint ep = iface.getEndpoint(i);
+                            if (ep.getDirection() == UsbConstants.USB_DIR_IN) {
+                                if (bulkIn == null) {
+                                    mLogger.log(String.format("Bulk IN endpoint: %d", i));
+                                    bulkIn = ep;
+                                }
+                            } else {
+                                if (bulkOut == null) {
+                                    mLogger.log(String.format("Bulk OUT endpoint: %d", i));
+                                    bulkOut = ep;
+                                }
+                            }
+                        }
+                        if (bulkIn == null || bulkOut == null) {
+                            mLogger.logError("Unable to find bulk endpoints");
+                            return;
+                        }
+
+                        mLogger.log("Connected");
+                        mConnected = true;
+                        mDevice = device;
+                        mProtocolVersion = protocolVersion;
+                        mAccessoryInterface = iface;
+                        mAccessoryConnection = conn;
+                        mControlEndpoint = controlEndpoint;
+                        mTransport = new UsbAccessoryBulkTransport(mLogger, conn, bulkIn, bulkOut);
+                        if (mProtocolVersion >= 2) {
+                            registerHid();
+                        }
+                        startServices();
+                        mTransport.startReading();
+                        return;
+                    }
+
+                    // Do accessory negotiation.
+                    mLogger.log("Attempting to switch device to accessory mode...");
+
+                    // Send get protocol.
+                    int protocolVersion = getProtocol(conn);
+                    if (protocolVersion < 1) {
+                        mLogger.logError("Device does not support accessory protocol.");
+                        return;
+                    }
+                    mLogger.log("Protocol version: " + protocolVersion);
+
+                    // Send identifying strings.
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_MANUFACTURER, MANUFACTURER);
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_MODEL, MODEL);
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_DESCRIPTION, DESCRIPTION);
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_VERSION, VERSION);
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_URI, URI);
+                    sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_SERIAL, SERIAL);
+
+                    // Send start.
+                    // The device should re-enumerate as an accessory.
+                    mLogger.log("Sending accessory start request.");
+                    int len = conn.controlTransfer(UsbConstants.USB_DIR_OUT | UsbConstants.USB_TYPE_VENDOR,
+                            UsbAccessoryConstants.ACCESSORY_START, 0, 0, null, 0, 10000);
+                    if (len != 0) {
+                        mLogger.logError("Device refused to switch to accessory mode.");
                     } else {
-                        if (bulkOut == null) {
-                            mLogger.log(String.format("Bulk OUT endpoint: %d", i));
-                            bulkOut = ep;
-                        }
+                        mLogger.log("Waiting for device to re-enumerate...");
+                    }
+                } finally {
+                    if (!mConnected) {
+                        conn.releaseInterface(iface);
                     }
                 }
-                if (bulkIn == null || bulkOut == null) {
-                    mLogger.logError("Unable to find bulk endpoints");
-                    return;
-                }
-
-                mLogger.log("Connected");
-                mConnected = true;
-                mDevice = device;
-                mProtocolVersion = protocolVersion;
-                mAccessoryInterface = iface;
-                mAccessoryConnection = conn;
-                mControlEndpoint = controlEndpoint;
-                mTransport = new UsbAccessoryBulkTransport(mLogger, conn, bulkIn, bulkOut);
-                if (mProtocolVersion >= 2) {
-                    registerHid();
-                }
-                startServices();
-                mTransport.startReading();
-                return;
-            }
-
-            // Do accessory negotiation.
-            mLogger.log("Attempting to switch device to accessory mode...");
-
-            // Send get protocol.
-            int protocolVersion = getProtocol(conn);
-            if (protocolVersion < 1) {
-                mLogger.logError("Device does not support accessory protocol.");
-                return;
-            }
-            mLogger.log("Protocol version: " + protocolVersion);
-
-            // Send identifying strings.
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_MANUFACTURER, MANUFACTURER);
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_MODEL, MODEL);
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_DESCRIPTION, DESCRIPTION);
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_VERSION, VERSION);
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_URI, URI);
-            sendString(conn, UsbAccessoryConstants.ACCESSORY_STRING_SERIAL, SERIAL);
-
-            // Send start.
-            // The device should re-enumerate as an accessory.
-            mLogger.log("Sending accessory start request.");
-            int len = conn.controlTransfer(UsbConstants.USB_DIR_OUT | UsbConstants.USB_TYPE_VENDOR,
-                    UsbAccessoryConstants.ACCESSORY_START, 0, 0, null, 0, 10000);
-            if (len != 0) {
-                mLogger.logError("Device refused to switch to accessory mode.");
-            } else {
-                mLogger.log("Waiting for device to re-enumerate...");
-            }
-        } finally {
-            if (!mConnected) {
-                conn.releaseInterface(iface);
             }
         }
     }
@@ -342,14 +349,14 @@ public class SinkActivity extends AppCompatActivity {
                     }
                     for (int h = 0; h < historySize; h++) {
                         for (int p = 0; p < pointerCount; p++) {
-                            mMultitouchContacts[p].x = (int)event.getHistoricalX(p, h);
-                            mMultitouchContacts[p].y = (int)event.getHistoricalY(p, h);
+                            mMultitouchContacts[p].x = (int) event.getHistoricalX(p, h);
+                            mMultitouchContacts[p].y = (int) event.getHistoricalY(p, h);
                         }
                         sendHidTouchReport(pointerCount);
                     }
                     for (int p = 0; p < pointerCount; p++) {
-                        mMultitouchContacts[p].x = (int)event.getX(p);
-                        mMultitouchContacts[p].y = (int)event.getY(p);
+                        mMultitouchContacts[p].x = (int) event.getX(p);
+                        mMultitouchContacts[p].y = (int) event.getY(p);
                     }
                     sendHidTouchReport(pointerCount);
                     break;

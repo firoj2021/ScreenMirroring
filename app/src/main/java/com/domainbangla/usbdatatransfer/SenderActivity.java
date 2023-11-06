@@ -59,7 +59,7 @@ public class SenderActivity extends AppCompatActivity {
         mLogger = new TextLogger();
         mPresenter = new Presenter();
 
-      //  mLogger.log("Waiting for accessory display sink to be attached to USB...");
+        mLogger.log("Waiting for accessory display sink to be attached to USB...");
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
@@ -100,14 +100,14 @@ public class SenderActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        unregisterReceiver(mReceiver);
+        if (mReceiver != null){
+            unregisterReceiver(mReceiver);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //new DemoPresentation(this, getWindowManager().getDefaultDisplay()).show();
     }
 
     @Override
@@ -116,7 +116,7 @@ public class SenderActivity extends AppCompatActivity {
     }
 
     private void onAccessoryAttached(UsbAccessory accessory) {
-       // mLogger.log("USB accessory attached: " + accessory);
+        mLogger.log("USB accessory attached: " + accessory);
         if (!mConnected) {
             connect(accessory);
         }
@@ -129,9 +129,6 @@ public class SenderActivity extends AppCompatActivity {
     }
 
     private void connect(UsbAccessory accessory) {
-        if (!isSink(accessory)) {
-            return;
-        }
 
         if (mConnected) {
             disconnect();
@@ -202,7 +199,7 @@ public class SenderActivity extends AppCompatActivity {
                     if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
                         onAccessoryAttached(accessory);
                     } else {
-                      //  mLogger.logError("Accessory permission denied: " + accessory);
+                        mLogger.logError("Accessory permission denied: " + accessory);
                     }
                 }
             }
@@ -228,7 +225,7 @@ public class SenderActivity extends AppCompatActivity {
 
         @Override
         public void onDisplayAdded(Display display) {
-          //  mLogger.log("Accessory display added: " + display);
+            mLogger.log("Accessory display added: " + display);
             mPresentation = new DemoPresentation(SenderActivity.this, display, mLogger);
             mPresentation.show();
         }

@@ -138,34 +138,40 @@ public class MediaProjectionService extends Service {
 
         @Override
         public void run() {
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", mWidth, mHeight);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
-            format.setInteger("prepend-sps-pps-to-idr-frames",1);
-            MediaCodec codec;
-            try {
-                codec = MediaCodec.createEncoderByType("video/avc");
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        "failed to create video/avc encoder", e);
-            }
-            codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-            Surface surface = codec.createInputSurface();
-            codec.start();
+            try{
+                MediaFormat format = MediaFormat.createVideoFormat("video/avc", mWidth, mHeight);
+                format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
+                        MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+                format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
+                format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+                format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
+                format.setInteger("prepend-sps-pps-to-idr-frames",1);
+                MediaCodec codec;
+                try {
+                    codec = MediaCodec.createEncoderByType("video/avc");
+                } catch (IOException e) {
+                    throw new RuntimeException(
+                            "failed to create video/avc encoder", e);
+                }
+                codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
 
-            VirtualDisplay virtualDisplay = mMediaProjection.createVirtualDisplay(
-                    DISPLAY_NAME, mWidth, mHeight, mDensityDpi,
-                    DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null);
-            if (virtualDisplay != null) {
-                stream(codec);
-                virtualDisplay.release();
+                Surface surface = codec.createInputSurface();
+                codec.start();
+
+                VirtualDisplay virtualDisplay = mMediaProjection.createVirtualDisplay(
+                        DISPLAY_NAME, mWidth, mHeight, mDensityDpi,
+                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null);
+                if (virtualDisplay != null) {
+                    stream(codec);
+                    virtualDisplay.release();
+                }
+
+                codec.signalEndOfInputStream();
+                codec.stop();
+            }catch (Exception e){
+                e.printStackTrace();
             }
 
-            codec.signalEndOfInputStream();
-            codec.stop();
         }
 
         public void quit() {

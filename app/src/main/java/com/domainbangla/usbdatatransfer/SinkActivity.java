@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbEndpoint;
@@ -13,10 +14,12 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.Context;
 
@@ -37,9 +40,9 @@ public class SinkActivity extends AppCompatActivity {
 
     private static final String MANUFACTURER = "Android";
     private static final String MODEL = "Accessory Display";
-    private static final String DESCRIPTION = "Accessory Display Sink Test Application";
+    private static final String DESCRIPTION = "XRSense Screen Mirroring";
     private static final String VERSION = "1.0";
-    private static final String URI = "http://www.android.com/";
+    private static final String URI = "https://xrsense.global/";
     private static final String SERIAL = "0000000012345678";
 
     private static final int MULTITOUCH_DEVICE_ID = 0;
@@ -90,6 +93,7 @@ public class SinkActivity extends AppCompatActivity {
                 return true;
             }
         });
+        //adjustSurfaceSize();
 
         mLogger.log("Waiting for accessory display source to be attached to USB...");
 
@@ -115,6 +119,29 @@ public class SinkActivity extends AppCompatActivity {
             }
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+       // adjustSurfaceSize();
+    }
+
+//    public void adjustSurfaceSize(){
+//        ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
+//        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+//
+//        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            // Landscape orientation
+//            params.width = (int) (displayMetrics.widthPixels * .5); // Adjust the factor as needed
+//            params.height = (int) (displayMetrics.heightPixels * 0.7);
+//        } else {
+//            // Portrait orientation
+//            params.width = (int) (displayMetrics.widthPixels * 0.5); // Adjust the factor as needed
+//            params.height = (int) (displayMetrics.heightPixels * 0.5); // Adjust the factor as needed
+//        }
+//
+//        mSurfaceView.setLayoutParams(params);
+//    }
 
     @Override
     protected void onDestroy() {

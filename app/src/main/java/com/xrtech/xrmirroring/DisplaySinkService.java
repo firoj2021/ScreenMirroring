@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -26,9 +26,9 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.domainbangla.usbdatatransfer.common.Protocol;
-import com.domainbangla.usbdatatransfer.common.Service;
-import com.domainbangla.usbdatatransfer.common.Transport;
+import com.xrtech.xrmirroring.common.Protocol;
+import com.xrtech.xrmirroring.common.Service;
+import com.xrtech.xrmirroring.common.Transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

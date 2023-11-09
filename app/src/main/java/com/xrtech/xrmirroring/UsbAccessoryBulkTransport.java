@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 
-import com.domainbangla.usbdatatransfer.common.Logger;
-import com.domainbangla.usbdatatransfer.common.Transport;
+import com.xrtech.xrmirroring.common.Logger;
+import com.xrtech.xrmirroring.common.Transport;
 
 import java.io.IOException;
 

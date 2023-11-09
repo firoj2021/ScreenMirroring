@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.domainbangla.usbdatatransfer.common;
+package com.xrtech.xrmirroring.common;
 
 public abstract class Logger {
     public abstract void log(String message);

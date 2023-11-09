@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 // Constants from kernel include/linux/usb/f_accessory.h
 final class UsbAccessoryConstants {

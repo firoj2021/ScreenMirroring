@@ -1,4 +1,4 @@
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -15,8 +15,8 @@ import androidx.core.util.Pair;
 public class NotificationUtils {
 
     public static final int NOTIFICATION_ID = 1337;
-    private static final String NOTIFICATION_CHANNEL_ID = "com.domainbangla.usbdatatransfer.app";
-    private static final String NOTIFICATION_CHANNEL_NAME = "com.domainbangla.usbdatatransfer.app";
+    private static final String NOTIFICATION_CHANNEL_ID = "com.xrtech.xrmirroring.app";
+    private static final String NOTIFICATION_CHANNEL_NAME = "com.xrtech.xrmirroring.app";
 
     public static Pair<Integer, Notification> getNotification(@NonNull Context context) {
         createNotificationChannel(context);

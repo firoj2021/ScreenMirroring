@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.domainbangla.usbdatatransfer'
+    namespace 'com.xrtech.xrmirroring'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.domainbangla.usbdatatransfer"
+        applicationId "com.xrtech.xrmirroring"
         minSdk 24
         targetSdk 34
         versionCode 1

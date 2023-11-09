@@ -1,20 +1,4 @@
-/*
- * Copyright (C) 2013 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.content.Context;
 import android.hardware.display.DisplayManager;
@@ -23,30 +7,19 @@ import android.media.MediaCodec;
 import android.media.MediaCodec.BufferInfo;
 import android.media.MediaCodecInfo;
 import android.media.MediaFormat;
-import android.os.Handler;
-import android.os.Message;
-import android.view.Display;
+import android.media.projection.MediaProjection;
 import android.view.Surface;
 
-import com.domainbangla.usbdatatransfer.common.Protocol;
-import com.domainbangla.usbdatatransfer.common.Service;
-import com.domainbangla.usbdatatransfer.common.Transport;
+import com.xrtech.xrmirroring.common.Protocol;
+import com.xrtech.xrmirroring.common.Service;
+import com.xrtech.xrmirroring.common.Transport;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-public class DisplaySourceService extends Service {
-    private static final int MSG_DISPATCH_DISPLAY_ADDED = 1;
-    private static final int MSG_DISPATCH_DISPLAY_REMOVED = 2;
+public class MediaProjectionService extends Service {
 
-    private static final String DISPLAY_NAME = "Accessory Display";
-    private static final int BIT_RATE = 6000000;
-    private static final int FRAME_RATE = 30;
-    private static final int I_FRAME_INTERVAL = 10;
-
-    private final Callbacks mCallbacks;
-    private final ServiceHandler mHandler;
-    private final DisplayManager mDisplayManager;
+    private static final String DISPLAY_NAME = "MediaProjection Display";
 
     private boolean mSinkAvailable;
     private int mSinkWidth;
@@ -54,17 +27,17 @@ public class DisplaySourceService extends Service {
     private int mSinkDensityDpi;
 
     private VirtualDisplayThread mVirtualDisplayThread;
+    private MediaProjection mMediaProjection;
 
-    public DisplaySourceService(Context context, Transport transport, Callbacks callbacks) {
+    public MediaProjectionService(Context context, Transport transport, MediaProjection projection) {
         super(context, transport, Protocol.DisplaySourceService.ID);
-        mCallbacks = callbacks;
-        mHandler = new ServiceHandler();
-        mDisplayManager = (DisplayManager)context.getSystemService(Context.DISPLAY_SERVICE);
+        mMediaProjection = projection;
     }
 
     @Override
     public void start() {
         super.start();
+        getLogger().log("Sending MSG_QUERY.");
         getTransport().sendMessage(Protocol.DisplaySinkService.ID,
                 Protocol.DisplaySinkService.MSG_QUERY, null);
     }
@@ -72,7 +45,6 @@ public class DisplaySourceService extends Service {
     @Override
     public void stop() {
         super.stop();
-
         handleSinkNotAvailable();
     }
 
@@ -80,6 +52,7 @@ public class DisplaySourceService extends Service {
     public void onMessageReceived(int service, int what, ByteBuffer content) {
         switch (what) {
             case Protocol.DisplaySourceService.MSG_SINK_AVAILABLE: {
+                getLogger().log("Received MSG_SINK_AVAILABLE");
                 if (content.remaining() >= 12) {
                     final int width = content.getInt();
                     final int height = content.getInt();
@@ -109,6 +82,9 @@ public class DisplaySourceService extends Service {
             return;
         }
 
+        getLogger().log("Accessory display sink available: "
+                + "width=" + width + ", height=" + height
+                + ", densityDpi=" + densityDpi);
         mSinkAvailable = true;
         mSinkWidth = width;
         mSinkHeight = height;
@@ -117,6 +93,8 @@ public class DisplaySourceService extends Service {
     }
 
     private void handleSinkNotAvailable() {
+        getLogger().log("Accessory display sink not available.");
+
         mSinkAvailable = false;
         mSinkWidth = 0;
         mSinkHeight = 0;
@@ -139,28 +117,6 @@ public class DisplaySourceService extends Service {
         }
     }
 
-    public interface Callbacks {
-        public void onDisplayAdded(Display display);
-        public void onDisplayRemoved(Display display);
-    }
-
-    private final class ServiceHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_DISPATCH_DISPLAY_ADDED: {
-                    mCallbacks.onDisplayAdded((Display)msg.obj);
-                    break;
-                }
-
-                case MSG_DISPATCH_DISPLAY_REMOVED: {
-                    mCallbacks.onDisplayRemoved((Display)msg.obj);
-                    break;
-                }
-            }
-        }
-    }
-
     private final class VirtualDisplayThread extends Thread {
         private static final int TIMEOUT_USEC = 1000000;
 
@@ -176,40 +132,46 @@ public class DisplaySourceService extends Service {
             mDensityDpi = densityDpi;
         }
 
+        private static final int BIT_RATE = 5000000;
+        private static final int FRAME_RATE = 30;
+        private static final int I_FRAME_INTERVAL = 15;
+
         @Override
         public void run() {
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", mWidth, mHeight);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
-                    MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
-            MediaCodec codec;
-            try {
-                codec = MediaCodec.createEncoderByType("video/avc");
-            } catch (IOException e) {
-                throw new RuntimeException(
-                        "failed to create video/avc encoder", e);
+            try{
+                MediaFormat format = MediaFormat.createVideoFormat("video/avc", mWidth, mHeight);
+                format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
+                        MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
+                format.setInteger(MediaFormat.KEY_BIT_RATE, BIT_RATE);
+                format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+                format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, I_FRAME_INTERVAL);
+                format.setInteger("prepend-sps-pps-to-idr-frames",1);
+                MediaCodec codec;
+                try {
+                    codec = MediaCodec.createEncoderByType("video/avc");
+                } catch (IOException e) {
+                    throw new RuntimeException(
+                            "failed to create video/avc encoder", e);
+                }
+                codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+
+                Surface surface = codec.createInputSurface();
+                codec.start();
+
+                VirtualDisplay virtualDisplay = mMediaProjection.createVirtualDisplay(
+                        DISPLAY_NAME, mWidth, mHeight, mDensityDpi,
+                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, surface, null, null);
+                if (virtualDisplay != null) {
+                    stream(codec);
+                    virtualDisplay.release();
+                }
+
+                codec.signalEndOfInputStream();
+                codec.stop();
+            }catch (Exception e){
+                e.printStackTrace();
             }
-            codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-            Surface surface = codec.createInputSurface();
-            codec.start();
 
-            VirtualDisplay virtualDisplay = mDisplayManager.createVirtualDisplay(
-                    DISPLAY_NAME, mWidth, mHeight, mDensityDpi, surface, 0);
-            if (virtualDisplay != null) {
-                mHandler.obtainMessage(MSG_DISPATCH_DISPLAY_ADDED,
-                        virtualDisplay.getDisplay()).sendToTarget();
-
-                stream(codec);
-
-                mHandler.obtainMessage(MSG_DISPATCH_DISPLAY_REMOVED,
-                        virtualDisplay.getDisplay()).sendToTarget();
-                virtualDisplay.release();
-            }
-
-            codec.signalEndOfInputStream();
-            codec.stop();
         }
 
         public void quit() {
@@ -218,26 +180,22 @@ public class DisplaySourceService extends Service {
 
         private void stream(MediaCodec codec) {
             BufferInfo info = new BufferInfo();
-            ByteBuffer[] buffers = null;
             while (!mQuitting) {
                 int index = codec.dequeueOutputBuffer(info, TIMEOUT_USEC);
                 if (index >= 0) {
-                    if (buffers == null) {
-                        buffers = codec.getOutputBuffers();
-                    }
-
-                    ByteBuffer buffer = buffers[index];
+                    ByteBuffer buffer = codec.getOutputBuffer(index);
                     buffer.limit(info.offset + info.size);
                     buffer.position(info.offset);
 
                     getTransport().sendMessage(Protocol.DisplaySinkService.ID,
                             Protocol.DisplaySinkService.MSG_CONTENT, buffer);
                     codec.releaseOutputBuffer(index, false);
-                } else if (index == MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED) {
-                    buffers = null;
                 } else if (index == MediaCodec.INFO_TRY_AGAIN_LATER) {
-                    getLogger().log("Codec dequeue buffer timed out.");
+                   // getLogger().log("Codec dequeue buffer timed out.");
                 }
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {}
             }
         }
     }

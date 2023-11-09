@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import java.nio.ByteBuffer;
 

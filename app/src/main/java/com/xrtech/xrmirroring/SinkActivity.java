@@ -1,4 +1,4 @@
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,16 +14,14 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 import android.content.Context;
 
-import com.domainbangla.usbdatatransfer.common.Logger;
+import com.xrtech.xrmirroring.common.Logger;
 
 import android.hardware.usb.UsbDeviceConnection;
 
@@ -36,7 +34,7 @@ public class SinkActivity extends AppCompatActivity {
     private static final String TAG = "SinkActivity";
 
     private static final String ACTION_USB_DEVICE_PERMISSION =
-            "com.domainbangla.usbdatatransfer.ACTION_USB_DEVICE_PERMISSION";
+            "com.xrtech.xrmirroring.ACTION_USB_DEVICE_PERMISSION";
 
     private static final String MANUFACTURER = "Android";
     private static final String MODEL = "Accessory Display";

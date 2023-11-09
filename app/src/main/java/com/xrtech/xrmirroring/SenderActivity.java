@@ -1,4 +1,4 @@
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.app.ActivityManager;
 import android.app.PendingIntent;
@@ -19,14 +19,14 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.domainbangla.usbdatatransfer.common.Logger;
+import com.xrtech.xrmirroring.common.Logger;
 
 public class SenderActivity extends AppCompatActivity {
 
     private static final String TAG = "SenderActivity";
 
     private static final String ACTION_USB_ACCESSORY_PERMISSION =
-            "com.domainbangla.usbdatatransfer.ACTION_USB_ACCESSORY_PERMISSION";
+            "com.xrtech.xrmirroring.ACTION_USB_ACCESSORY_PERMISSION";
 
     private UsbManager mUsbManager;
     private AccessoryReceiver mReceiver;

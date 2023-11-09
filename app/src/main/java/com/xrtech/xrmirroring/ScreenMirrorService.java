@@ -1,6 +1,6 @@
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
-import static com.domainbangla.usbdatatransfer.SenderActivity.mTransport;
+import static com.xrtech.xrmirroring.SenderActivity.mTransport;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -19,7 +19,7 @@ import android.view.Display;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
-import com.domainbangla.usbdatatransfer.common.Logger;
+import com.xrtech.xrmirroring.common.Logger;
 
 import java.util.Objects;
 

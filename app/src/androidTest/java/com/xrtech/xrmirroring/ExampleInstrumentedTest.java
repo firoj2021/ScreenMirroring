@@ -1,4 +1,4 @@
-package com.domainbangla.usbdatatransfer;
+package com.xrtech.xrmirroring;
 
 import android.content.Context;
 

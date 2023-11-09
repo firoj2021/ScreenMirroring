@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "USBDataTransfer"
+rootProject.name = "xrmirroring"
 include ':app'

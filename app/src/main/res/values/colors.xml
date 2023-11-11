@@ -1,5 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="red">#FF0000</color>
+    <color name="red2">#DB3C30</color>
+    <color name="darkred">#6E010E</color>
+    <color name="blue">#0000FF</color>"
+    <color name="steelblue">#FF1B495E</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="green">#49AE4F</color>
+    <color name="darkgreen">#016E71</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#888888</color>
+    <color name="lightgrey">#E4E3E3</color>
+    <color name="lightgrey2">#D3D1D1</color>
+    <color name="darkgrey">#5C5C5C</color>
+    <color name="grey1">#666767</color>
+    <color name="grey2">#F5F8F8</color>
+    <color name="dark">#414142</color>
+    <color name="cyan">#D5F9FA</color>
+    <color name="brown">#DCCBCE</color>
+    <color name="empty">#DDDDDD</color>
+
+    <color name="ambientBackground">#DDDDDD</color>
+    <color name="ambientLowLevels">#00FF00</color>
+    <color name="ambientLowMiddleLevels">#DDFA00</color>
+    <color name="ambientMiddleHighLevels">#FFD500</color>
+    <color name="ambientHighLevels">#FF8800</color>
+    <color name="ambientVeryHighLevels">#FF0000</color>
+    <color name="milky_white">#E1DFDF</color>
+    <color name="reddan">#F44336</color>
+
+    <color name="dialogBackColor">#F5FFFFFF</color>
+
+    <color name="bgColor">@color/white</color>
+    <color name="topBarColor">@color/black</color>
+    <color name="bottomBarColor">@color/black</color>
+    <color name="msgRowColor">@color/black</color>
+    <color name="bgRadioGroupColor">@color/milky_white</color>
+    <color name="lblColor">@color/black</color>
+    <color name="txtColor">@color/white</color>
+    <color name="btnBgColor">@color/white</color>
+    <color name="btnTxtColor">@color/black</color>
+    <color name="tblLblRowBgColor">@color/black</color>
+    <color name="tblValRowBgColor">@color/milky_white</color>
+    <color name="tblValRowTxtColor">@color/black</color>
+    <color name="dialogBgColor">@color/black</color>
+    <color name="dialogTxtBgColor">@color/milky_white</color>
+    <color name="dialogTxtColor">@color/black</color>
+
+    <color name="dialogTblLblBgColor">@color/grey1</color>
+    <color name="dialogTblLblTxtColor">@color/milky_white</color>
+    <color name="dialogTblLblBgColor2">@color/white</color>
+    <color name="dialogTblLblTxtColor2">@color/black</color>
+    <color name="dialogTblTxtBgColor">@color/milky_white</color>
+    <color name="dialogTblTxtColor">@color/black</color>
+    <color name="dialogTblTxtBgColor2">@color/lightgrey2</color>
+    <color name="dialogTblTxtColor2">@color/black</color>
+
+    <color name="txtCommonColor">@color/black</color>
+    <color name="btnBgSemiTrans">#77FFFFFF</color>
+
+    <color name="menuTxtColor">@color/black</color>
+
+
 </resources>

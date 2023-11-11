@@ -66,7 +66,7 @@ public class SenderActivity extends AppCompatActivity {
         registerReceiver(mReceiver, filter);
 
         Intent intent = getIntent();
-        if (intent.getAction().equals(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)) {
+        if (intent.getAction() != null && intent.getAction().equals(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)) {
             UsbAccessory accessory =
                     (UsbAccessory) intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
             if (accessory != null) {

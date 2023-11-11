@@ -2,14 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.usb.accessory" />
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USB_PERMISSION" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-
     <uses-permission
         android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
         tools:ignore="ProtectedPermissions" />
@@ -23,11 +29,15 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.USBDataTransfer"
+        android:theme="@style/Theme.XRMirror"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
+
         <activity
-            android:name=".SinkActivity"
-            android:launchMode="singleTop"
+            android:name=".LoginActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="true">
             <intent-filter>
@@ -35,10 +45,27 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".QRCodeActivity"
+            android:label="@string/qr_code">
+
+        </activity>
+        <activity
+            android:name=".SenderActivity"
+            android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
-            <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
         </activity>
 

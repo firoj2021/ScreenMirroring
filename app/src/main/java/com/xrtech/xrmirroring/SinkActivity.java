@@ -70,6 +70,7 @@ public class SinkActivity extends AppCompatActivity {
     private boolean mMultitouchEnabled;
     private UsbHid.Multitouch.Contact[] mMultitouchContacts;
 
+    private SharedPreferencesUtils sharedPreferencesUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class SinkActivity extends AppCompatActivity {
         mFpsTextView = (TextView) findViewById(R.id.fpsTextView);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {

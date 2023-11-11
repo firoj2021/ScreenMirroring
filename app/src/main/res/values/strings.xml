@@ -5,4 +5,9 @@
     <string name="start_recording">Start Recording</string>
     <string name="stop_recording">Stop Recording</string>
     <string name="recording">Recording</string>
+    <string name="qr_code">QR Code</string>
+    <string name="current_token_expire">Current Token Expires: %1$s</string>
+    <string name="no_valid_token">No valid token. Rescan using a valid token.</string>
+    <string name="qr_code_expiry">QR Code Expiry Date</string>
+    <string name="scanned_successfully">Scanned Successfully! Current Token Will Expires: %1$s</string>
 </resources>

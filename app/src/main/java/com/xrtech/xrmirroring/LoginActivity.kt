@@ -8,19 +8,20 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.Window
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.mlkit.vision.barcode.common.Barcode
+import com.xrtech.xrmirroring.listeners.CommonListener
+import com.xrtech.xrmirroring.networking.ApiServices
 import com.xrtech.xrmirroring.utils.Extensions.toDate
+import com.xrtech.xrmirroring.utils.NetworkUtils
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(),CommonListener {
 
     private val TAG = "LoginActivity"
     private lateinit var activity: LoginActivity
@@ -33,7 +34,6 @@ class LoginActivity : AppCompatActivity() {
 
     val CAMERA_PERMISSION_REQUEST_CODE = 1
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -44,15 +44,15 @@ class LoginActivity : AppCompatActivity() {
 
         sharedPreferencesUtils = SharedPreferencesUtils(this)
 
-        checkQrCodeValidity()
-
         val deviceId = deviceId()
         tvDeviceId.text = "Device ID:"+deviceId
 
         Log.e(TAG,"device id:${deviceId}")
 
         txtSignin.setOnClickListener {
-            startActivityForResult(Intent(this, QRCodeActivity::class.java), 55)
+            if (NetworkUtils.isNetworkAvailable(applicationContext)) {
+                startActivityForResult(Intent(this, QRCodeActivity::class.java), 55)
+            }
         }
 
         if (!checkPermissionForCamera()) {
@@ -61,11 +61,17 @@ class LoginActivity : AppCompatActivity() {
                 CAMERA_PERMISSION_REQUEST_CODE
             )
         }
-
+       val lastUsedQRCodeLoginURL = sharedPreferencesUtils.getString(AppSettings.KEY_LOGIN_URL,"")
+        if (lastUsedQRCodeLoginURL.isNotEmpty() && NetworkUtils.isNetworkAvailable(activity)){
+            txtSignin.text = "Please wait ... checking your credentails"
+            ApiServices.postLoginCode(lastUsedQRCodeLoginURL + "/",deviceId,this)
+        }else{
+            val qrValidTill = sharedPreferencesUtils.getString(AppSettings.KEY_QR_CODE_VALIDITY,"")
+            checkQrCodeValidity(qrValidTill)
+        }
     }
 
-    fun checkQrCodeValidity(){
-        val qrValidTill = sharedPreferencesUtils.getString(AppSettings.KEY_QR_CODE_VALIDITY,"")
+    fun checkQrCodeValidity(qrValidTill:String){
         if (qrValidTill.isNotEmpty()){
             val finalDate = qrValidTill.toDate("yyyy-MM-dd HH:mm:ss")
             val calendar: Calendar = Calendar.getInstance()
@@ -75,8 +81,13 @@ class LoginActivity : AppCompatActivity() {
                 qrExpired = true
             }
             if (!qrExpired) {
-                val intent = Intent(activity, SenderActivity::class.java)
-                startActivity(intent)
+                if (AppSettings.isHostApp){
+                    val intent = Intent(activity, SinkActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(activity, SenderActivity::class.java)
+                    startActivity(intent)
+                }
                 finish()
             }else{
                 showCustomDialog(getString(R.string.qr_code_expiry),"QR code is expired. Please login again",false)
@@ -87,18 +98,14 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         try {
-            var qrCodeOK = false
             var title: String = ""
             if (requestCode == 55) {
                 if (resultCode == Activity.RESULT_OK) {
-                    qrCodeOK = true
                     val exp = data?.getStringExtra("exp")
                     val qrExpired: Boolean? = data?.getBooleanExtra("qrExpired", true)
                     var bodyMsg: String
                     var strvalue = exp
-
                     title = getString(R.string.qr_code_expiry)
-
                     if (qrExpired!!){
                         bodyMsg ="QR code is already expired!"
                         showCustomDialog(title, bodyMsg,false)
@@ -134,8 +141,13 @@ class LoginActivity : AppCompatActivity() {
         okBtn.setOnClickListener {
             dialog.dismiss()
             if (isNavigate){
-                val intent = Intent(activity, SenderActivity::class.java)
-                startActivity(intent)
+                if (AppSettings.isHostApp){
+                    val intent = Intent(activity, SinkActivity::class.java)
+                    startActivity(intent)
+                }else{
+                    val intent = Intent(activity, SenderActivity::class.java)
+                    startActivity(intent)
+                }
                 finish()
             }
         }
@@ -178,6 +190,24 @@ class LoginActivity : AppCompatActivity() {
             msg,
             Toast.LENGTH_LONG
         ).show()
+    }
+
+    override fun success(msg: String) {
+
+    }
+
+    override fun data(data: String, isExpired: Boolean) {
+        txtSignin.text = "Sign In"
+        if (isExpired){
+            showToast("QR code is expired!")
+        }else{
+            checkQrCodeValidity(data)
+        }
+    }
+
+    override fun error(msg: String) {
+        txtSignin.text = "Sign In"
+       showToast(msg)
     }
 
 

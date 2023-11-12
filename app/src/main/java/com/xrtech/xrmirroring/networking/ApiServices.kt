@@ -1,20 +1,21 @@
 package com.xrtech.xrmirroring.networking
 
-import android.app.Activity
-import android.content.Intent
 import android.util.Log
-import com.xrtech.xrmirroring.QRCodeActivity
 import com.xrtech.xrmirroring.listeners.CommonListener
 import com.xrtech.xrmirroring.utils.Extensions.toDate
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
+import java.util.Calendar
 
 
 object ApiServices {
     const val TAG = "ApiServices"
-    fun postLoginCode(context: QRCodeActivity, url: String,deviceUID:String,mListener: CommonListener) {
+    fun postLoginCode(
+        url: String,
+        deviceUID: String,
+        mListener: CommonListener
+    ) {
         var retrofitClient: RetrofitClient? = RetrofitClient(url)
         val service: ApiEndPoints = retrofitClient!!.client!!.create(ApiEndPoints::class.java)
         service.postLoginCode(
@@ -27,33 +28,29 @@ object ApiServices {
                 call: Call<LoginRequestResponse>,
                 response: Response<LoginRequestResponse>,
             ) {
-                if (response.isSuccessful && response.body()?.data != null){
-                    Log.d(TAG,"response.isSuccessful:${response.body()?.data!!.name}")
+               if (response.isSuccessful && response.body()?.data != null) {
                     val data = response.body()?.data!!
                     val loginCode = data.login_code
                     val finalDate = loginCode.validTill.toDate("yyyy-MM-dd HH:mm:ss")
                     val calendar: Calendar = Calendar.getInstance()
                     val currentTime = calendar.timeInMillis
                     var qrExpired = false
+
+                    val qrCodeStatus = data.login_code.is_active
+
+                    Log.e(TAG,"qrCodeStatus:${qrCodeStatus}")
+
                     if (finalDate?.time!!.toLong() < currentTime) {
                         qrExpired = true
                     }
-                    val intent = Intent()
-                    intent.putExtra("exp", loginCode.validTill)
-                    intent.putExtra("qrExpired", qrExpired)
-                    context.setResult(Activity.RESULT_OK, intent)
-                    context.finish()
-                }else{
+                    mListener.data(loginCode.validTill,qrExpired)
+                } else {
                     mListener.error(response.body()?.message!!)
-                    val intent = Intent()
-                    intent.putExtra("exp", "2023-11-11 10:10:00")
-                    intent.putExtra("qrExpired", true)
-                    context.setResult(Activity.RESULT_OK, intent)
-                    context.finish()
+                    mListener.data("2023-11-11 10:10:00",true)
                 }
             }
             override fun onFailure(call: Call<LoginRequestResponse>, t: Throwable) {
-                Log.d(TAG,"onFailure:${t.message}")
+                mListener.error("Your request is failed")
             }
 
         })

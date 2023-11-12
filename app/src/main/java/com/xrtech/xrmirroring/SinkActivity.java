@@ -70,8 +70,7 @@ public class SinkActivity extends AppCompatActivity {
     private boolean mMultitouchEnabled;
     private UsbHid.Multitouch.Contact[] mMultitouchContacts;
 
-    private SharedPreferencesUtils sharedPreferencesUtils;
-
+    private TextView txtDeviceId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,12 +78,17 @@ public class SinkActivity extends AppCompatActivity {
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         mLogTextView = (TextView) findViewById(R.id.logTextView);
+        txtDeviceId = (TextView) findViewById(R.id.txtDeviceId);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
 
         mFpsTextView = (TextView) findViewById(R.id.fpsTextView);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+
+        SharedPreferencesUtils sharedPreferencesUtils = new SharedPreferencesUtils(this);
+        String deviceId = sharedPreferencesUtils.getString(AppSettings.INSTANCE.getKEY_DEVICE_ID(),"");
+        txtDeviceId.setText("Device ID:"+deviceId);
 
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -105,7 +109,7 @@ public class SinkActivity extends AppCompatActivity {
         registerReceiver(mReceiver, filter);
 
         Intent intent = getIntent();
-        if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
+        if (intent != null && intent.getAction() != null && intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {
             UsbDevice device = intent.<UsbDevice>getParcelableExtra(UsbManager.EXTRA_DEVICE);
             if (device != null) {
                 onDeviceAttached(device);

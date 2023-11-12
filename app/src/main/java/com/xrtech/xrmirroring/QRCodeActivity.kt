@@ -47,15 +47,6 @@ class QRCodeActivity : AppCompatActivity(), SurfaceHolder.Callback, CommonListen
         setContentView(binding.root)
         sharedPreferencesUtils = SharedPreferencesUtils(this)
         previewView = binding.previewView
-        if (NetworkUtils.isNetworkAvailable(applicationContext)) {
-            AppSettings.appIsonline = 1
-        } else {
-            Toast.makeText(
-                this,
-                "Check your internet connection please. Then try again",
-                Toast.LENGTH_LONG
-            ).show()
-        }
         startCamera()
     }
 
@@ -122,12 +113,16 @@ class QRCodeActivity : AppCompatActivity(), SurfaceHolder.Callback, CommonListen
                         try {
                             val beQRCode = BEQRCode(barCode)
                             if (beQRCode.isValid) {
-                                Log.d(TAG, "QR code is valid:"+beQRCode.loginCodeURL)
+                                Log.d(TAG, "QR code is valid:" + beQRCode.loginCodeURL)
+                                sharedPreferencesUtils.saveString(
+                                    AppSettings.KEY_LOGIN_URL,
+                                    beQRCode.loginCodeURL
+                                )
                                 ApiServices.postLoginCode(
-                                    this,
                                     beQRCode.loginCodeURL + "/",
                                     sharedPreferencesUtils.getString(AppSettings.KEY_DEVICE_ID),
-                                this)
+                                    this
+                                )
                             } else {
                                 Log.d(TAG, "QR code is not valid")
                             }
@@ -172,11 +167,19 @@ class QRCodeActivity : AppCompatActivity(), SurfaceHolder.Callback, CommonListen
 
     }
 
-    override fun error(msg: String) {
-       showToast(msg)
+    override fun data(data: String, qrExpired: Boolean) {
+        val intent = Intent()
+        intent.putExtra("exp", data)
+        intent.putExtra("qrExpired", qrExpired)
+        setResult(Activity.RESULT_OK, intent)
+        finish()
     }
 
-    fun showToast(msg:String){
+    override fun error(msg: String) {
+        showToast(msg)
+    }
+
+    fun showToast(msg: String) {
         Toast.makeText(
             this,
             msg,

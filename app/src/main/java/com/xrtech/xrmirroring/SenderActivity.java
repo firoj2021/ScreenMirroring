@@ -42,6 +42,7 @@ public class SenderActivity extends AppCompatActivity {
 
     private static final int PERMISSION_CODE = 129;
 
+    private TextView txtDeviceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +54,13 @@ public class SenderActivity extends AppCompatActivity {
         btnConnect = (Button) findViewById(R.id.btnConnect);
         btnShare = (Button) findViewById(R.id.btnShare);
         mLogTextView = (TextView) findViewById(R.id.logTextView);
+        txtDeviceId = (TextView) findViewById(R.id.txtDeviceId);
         mLogTextView.setMovementMethod(ScrollingMovementMethod.getInstance());
         mLogger = new TextLogger();
+
+        SharedPreferencesUtils sharedPreferencesUtils = new SharedPreferencesUtils(this);
+        String deviceId = sharedPreferencesUtils.getString(AppSettings.INSTANCE.getKEY_DEVICE_ID(),"");
+        txtDeviceId.setText("Device ID:"+deviceId);
 
         mLogger.log("Waiting for accessory display sink to be attached to USB...");
 

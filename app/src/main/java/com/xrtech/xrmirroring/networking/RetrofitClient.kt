@@ -12,19 +12,17 @@ import java.util.concurrent.TimeUnit
 //import constants.ApiConstants;
 //import okhttp3.logging.HttpLoggingInterceptor;
 
-class RetrofitClient (Base_URL:String) {
+class RetrofitClient(Base_URL:String) {
 
     private var retrofit: Retrofit? = null
      var Base_URL = Base_URL
-    //var Base_URL = "https://staging.xrsense.global/api/1.0/devices/523d5bdc313407e3/"
 
      val client: Retrofit?
         get() {
             if (retrofit == null) {
                 val protocols: List<Protocol> = object : ArrayList<Protocol>() {
                     init {
-                        add(Protocol.HTTP_1_1) // <-- The only protocol used
-                        //add(Protocol.HTTP_2);
+                        add(Protocol.HTTP_1_1)
                     }
                 }
                 val client = OkHttpClient.Builder()

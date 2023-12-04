@@ -76,7 +76,7 @@
                 <SurfaceView
                     android:id="@+id/surfaceView"
                     android:layout_width="720px"
-                    android:layout_height="560px"
+                    android:layout_height="160px"
                     android:layout_gravity="center_horizontal"/>
 
             </FrameLayout>

@@ -3,7 +3,7 @@ package com.xrtech.xrmirroring
 object AppSettings {
 
 
-    val isHostApp = false //Please update also at the manifets file
+    val isHostApp = true //Please update also at the manifets file
 
     //during run to the vuzix device::Host device
     //set isHostApp = true

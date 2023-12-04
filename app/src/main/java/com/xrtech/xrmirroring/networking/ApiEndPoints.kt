@@ -9,7 +9,7 @@ interface ApiEndPoints {
     @FormUrlEncoded
     fun postLoginCode(
         @Header("X-Auth-Token") token: String?,
-        @Header("client-id") clientId: Int, @Field("device_uid") deviceUID: String?
+        @Header("client-id") clientId: String?, @Field("device_uid") deviceUID: String?
     ): Call<LoginRequestResponse>?
 
 

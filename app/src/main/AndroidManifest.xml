@@ -53,7 +53,7 @@
         <!--SenderActivity Client-->
         <!--SinkActivity Host-->
         <activity
-            android:name=".SenderActivity"
+            android:name=".SinkActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="false"
             android:launchMode="singleTop">

@@ -8,7 +8,8 @@ object ApiConstants {
     val environment: ApiEnvironment = ApiEnvironment.PRODUCTION
 
     //const val CLIENT_ID = 2
-    const val CLIENT_ID = "5614"
+    //const val CLIENT_ID = "5614" //prod
+    const val CLIENT_ID = "2" //dev
     const val EMAIL = "api@xrsense.global"
     fun apiBaseURL(): String {
         return when (environment) {
@@ -24,7 +25,8 @@ object ApiConstants {
             ApiEnvironment.DEVELOPMENT -> "IyL3CUM8bSCcjgJPkEHDPTz5CcUyKQFKL7gJi20kOnPrsNiBGJ3Y65ibzAzT6hE6"
             ApiEnvironment.STAGING -> "IyL3CUM8bSCcjgJPkEHDPTz5CcUyKQFKL7gJi20kOnPrsNiBGJ3Y65ibzAzT6hE6"
             //ApiEnvironment.PRODUCTION -> "eBE4htTu9YX83n2jYZORkoSSeEb5rdBUvbrhFPZJoDIGtGjYgShGwiUoKz75qw8B"
-            ApiEnvironment.PRODUCTION -> "QseT5KaDiK2K4vYPScHccfYjrCe39A2f1XtjozuSP8KSOvrCNt1ZXa4U7GYYwN7n"
+            //ApiEnvironment.PRODUCTION -> "QseT5KaDiK2K4vYPScHccfYjrCe39A2f1XtjozuSP8KSOvrCNt1ZXa4U7GYYwN7n"
+            ApiEnvironment.PRODUCTION -> "eBE4htTu9YX83n2jYZORkoSSeEb5rdBUvbrhFPZJoDIGtGjYgShGwiUoKz75qw8B"
             ApiEnvironment.STABLE -> "tQm6KFdPdUYm8FrNZunDQw8Py3BTQxzAiDtEaeX2ieAuTwLkUkxAL8beNHVBTavO"
         }
     }

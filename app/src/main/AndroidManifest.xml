@@ -54,7 +54,7 @@
         <!--SenderActivity Client-->
         <!--SinkActivity Host-->
         <activity
-            android:name="com.xrtech.xrmirroring.SinkActivity"
+            android:name="com.xrtech.xrmirroring.SenderActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="false"
             android:launchMode="singleTop">

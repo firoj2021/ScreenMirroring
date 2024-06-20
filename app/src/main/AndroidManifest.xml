@@ -37,7 +37,7 @@
             android:value="barcode_ui"/>
 
         <activity
-            android:name=".LoginActivity"
+            android:name="com.xrtech.xrmirroring.LoginActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="true">
             <intent-filter>
@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".QRCodeActivity"
+        <activity android:name="com.xrtech.xrmirroring.QRCodeActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:label="@string/qr_code">
 
@@ -54,7 +54,7 @@
         <!--SenderActivity Client-->
         <!--SinkActivity Host-->
         <activity
-            android:name=".SenderActivity"
+            android:name="com.xrtech.xrmirroring.SinkActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="false"
             android:launchMode="singleTop">
@@ -73,7 +73,7 @@
         </activity>
 
         <service
-            android:name=".ScreenMirrorService"
+            android:name="com.xrtech.xrmirroring.ScreenMirrorService"
             android:foregroundServiceType="mediaProjection" />
 
     </application>

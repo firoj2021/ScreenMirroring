@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.hardware.usb.UsbAccessory;
 import android.hardware.usb.UsbManager;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
@@ -69,7 +70,12 @@ public class SenderActivity extends AppCompatActivity {
         filter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
         filter.addAction(ACTION_USB_ACCESSORY_PERMISSION);
         mReceiver = new AccessoryReceiver();
-        registerReceiver(mReceiver, filter);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
+        }else {
+            registerReceiver(mReceiver, filter);
+        }
 
         Intent intent = getIntent();
         if (intent.getAction() != null && intent.getAction().equals(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)) {

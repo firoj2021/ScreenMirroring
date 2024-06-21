@@ -15,7 +15,7 @@ android {
         minSdk 24
         targetSdk 34
         versionCode 9
-        versionName "Mobile-Version-1.9"
+        versionName "Vuzix-Version-1.9"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

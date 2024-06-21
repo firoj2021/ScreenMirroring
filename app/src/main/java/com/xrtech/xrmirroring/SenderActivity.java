@@ -39,7 +39,7 @@ public class SenderActivity extends AppCompatActivity {
 
     public static UsbAccessoryStreamTransport mTransport;
 
-    private Button btnConnect,btnShare;
+    private Button btnConnect, btnShare;
 
     private static final int PERMISSION_CODE = 129;
 
@@ -60,8 +60,8 @@ public class SenderActivity extends AppCompatActivity {
         mLogger = new TextLogger();
 
         SharedPreferencesUtils sharedPreferencesUtils = new SharedPreferencesUtils(this);
-        String deviceId = sharedPreferencesUtils.getString(AppSettings.INSTANCE.getKEY_DEVICE_ID(),"");
-        txtDeviceId.setText("Device ID:"+deviceId);
+        String deviceId = sharedPreferencesUtils.getString(AppSettings.INSTANCE.getKEY_DEVICE_ID(), "");
+        txtDeviceId.setText("Device ID:" + deviceId);
 
         mLogger.log("Waiting for accessory display sink to be attached to USB...");
 
@@ -72,8 +72,8 @@ public class SenderActivity extends AppCompatActivity {
         mReceiver = new AccessoryReceiver();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
-        }else {
+            registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
+        } else {
             registerReceiver(mReceiver, filter);
         }
 
@@ -108,9 +108,9 @@ public class SenderActivity extends AppCompatActivity {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mConnected && mTransport != null){
+                if (mConnected && mTransport != null) {
                     startProjection();
-                }else {
+                } else {
                     showToast("Please connect first");
                 }
             }
@@ -125,7 +125,7 @@ public class SenderActivity extends AppCompatActivity {
 
 
     private void stopProjection() {
-        if (isMyServiceRunning(ScreenMirrorService.class)){
+        if (isMyServiceRunning(ScreenMirrorService.class)) {
             startService(ScreenMirrorService.getStopIntent(this));
         }
     }
@@ -152,7 +152,7 @@ public class SenderActivity extends AppCompatActivity {
         //stopProjection();
 
         //Then start again
-        if (!isMyServiceRunning(ScreenMirrorService.class)){
+        if (!isMyServiceRunning(ScreenMirrorService.class)) {
             startService(ScreenMirrorService.getStartIntent(this, resultCode, data));
         }
     }
@@ -241,14 +241,14 @@ public class SenderActivity extends AppCompatActivity {
         }
     }
 
-    public void showToast(String msg){
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mReceiver != null){
+        if (mReceiver != null) {
             unregisterReceiver(mReceiver);
         }
         stopProjection();

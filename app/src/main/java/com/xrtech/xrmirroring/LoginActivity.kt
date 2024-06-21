@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity(),CommonListener {
         }
        val lastUsedQRCodeLoginURL = sharedPreferencesUtils.getString(AppSettings.KEY_LOGIN_URL,"")
         if (lastUsedQRCodeLoginURL.isNotEmpty() && NetworkUtils.isNetworkAvailable(activity)){
-            txtSignin.text = "Please wait ... checking your credentails"
+            txtSignin.text = "Please wait ... checking your credentials"
             ApiServices.postLoginCode(lastUsedQRCodeLoginURL + "/",deviceId,this)
         }else{
             val qrValidTill = sharedPreferencesUtils.getString(AppSettings.KEY_QR_CODE_VALIDITY,"")

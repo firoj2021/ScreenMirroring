@@ -72,7 +72,7 @@ public class SenderActivity extends AppCompatActivity {
         mReceiver = new AccessoryReceiver();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
+            registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
         }else {
             registerReceiver(mReceiver, filter);
         }

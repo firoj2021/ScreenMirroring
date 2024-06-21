@@ -109,7 +109,7 @@ public class SinkActivity extends AppCompatActivity {
         mReceiver = new DeviceReceiver();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(mReceiver, filter, RECEIVER_EXPORTED);
+            registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
         }else {
             registerReceiver(mReceiver, filter);
         }

@@ -21,6 +21,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.content.Context;
 
@@ -87,6 +88,7 @@ public class SinkActivity extends AppCompatActivity {
         mFpsTextView = (TextView) findViewById(R.id.fpsTextView);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        setCustomView();
         mSurfaceView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -123,6 +125,17 @@ public class SinkActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void setCustomView(){
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+        ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
+        params.width = displayMetrics.widthPixels;
+        params.height =displayMetrics.heightPixels;
+        mSurfaceView.setLayoutParams(params);
     }
 
     @Override

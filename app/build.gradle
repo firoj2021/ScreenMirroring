@@ -10,8 +10,8 @@ android {
         applicationId "com.domainbangla.usbdatatransfer"
         minSdk 24
         targetSdk 34
-        versionCode 10
-        versionName "Vuzix-Version-1.10"
+        versionCode 11
+        versionName "Vuzix-Version-1.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

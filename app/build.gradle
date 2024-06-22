@@ -14,8 +14,8 @@ android {
         applicationId "com.xrtech.xrmirroring"
         minSdk 24
         targetSdk 34
-        versionCode 9
-        versionName "Vuzix-Version-1.9"
+        versionCode 10
+        versionName "Vuzix-Version-1.10"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

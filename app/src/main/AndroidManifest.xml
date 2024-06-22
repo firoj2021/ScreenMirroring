@@ -56,18 +56,28 @@
             android:label="@string/qr_code">
 
         </activity>
-        <!--SenderActivity Client-->
+
         <!--SinkActivity Host-->
         <activity
             android:name="com.xrtech.xrmirroring.SinkActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="false"
             android:launchMode="singleTop">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+
+        <!--SenderActivity Client-->
+        <activity
+            android:name="com.xrtech.xrmirroring.SenderActivity"
+            android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>

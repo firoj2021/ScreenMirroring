@@ -13,7 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +118,26 @@ public class SenderActivity extends AppCompatActivity {
                 }
             }
         });
+
+        getDisplaySize();
+    }
+
+    public void getDisplaySize(){
+
+        // Get the window manager
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        // Create a new DisplayMetrics object
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        // Get the default display and populate the display metrics
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+        // Extract the width and height
+        int width = displayMetrics.widthPixels;
+        int height = displayMetrics.heightPixels;
+
+        Log.e(TAG,"width:"+width+",height:"+height);
+
+        mLogger.log("Display width:"+width+",height:"+height);
+
     }
 
     private void startProjection() {

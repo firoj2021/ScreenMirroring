@@ -15,10 +15,13 @@ import android.hardware.usb.UsbManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.content.Context;
 
@@ -86,7 +89,7 @@ public class SinkActivity extends AppCompatActivity {
         mFpsTextView = (TextView) findViewById(R.id.fpsTextView);
 
         mSurfaceView = (SurfaceView) findViewById(R.id.surfaceView);
-
+        setCustomView();
         SharedPreferencesUtils sharedPreferencesUtils = new SharedPreferencesUtils(this);
         String deviceId = sharedPreferencesUtils.getString(AppSettings.INSTANCE.getKEY_DEVICE_ID(),"");
         txtDeviceId.setText("Device ID:"+deviceId);
@@ -128,6 +131,17 @@ public class SinkActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void setCustomView(){
+        WindowManager windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+
+        ViewGroup.LayoutParams params = mSurfaceView.getLayoutParams();
+        params.width = displayMetrics.widthPixels;
+        params.height =displayMetrics.heightPixels;
+        mSurfaceView.setLayoutParams(params);
     }
 
     @Override

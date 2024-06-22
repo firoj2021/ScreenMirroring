@@ -12,6 +12,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
@@ -102,7 +103,11 @@ public class SinkActivity extends AppCompatActivity {
         filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
         filter.addAction(ACTION_USB_DEVICE_PERMISSION);
         mReceiver = new DeviceReceiver();
-        registerReceiver(mReceiver, filter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(mReceiver, filter, Context.RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(mReceiver, filter);
+        }
 
         Intent intent = getIntent();
         if (intent.getAction().equals(UsbManager.ACTION_USB_DEVICE_ATTACHED)) {

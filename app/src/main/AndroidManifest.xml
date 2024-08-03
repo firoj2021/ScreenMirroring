@@ -7,6 +7,7 @@
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.usb.accessory" />
+    <uses-permission android:name="android.permission.USB_ACCESSORY" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -16,6 +17,11 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.USB_PERMISSION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION"/>
+    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+        tools:ignore="ProtectedPermissions" />
+
     <uses-permission
         android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
         tools:ignore="ProtectedPermissions" />
@@ -51,18 +57,28 @@
             android:label="@string/qr_code">
 
         </activity>
-        <!--SenderActivity Client-->
+
         <!--SinkActivity Host-->
+        <activity
+            android:name="com.xrtech.xrmirroring.SinkActivity"
+            android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+
+        <!--SenderActivity Client-->
         <activity
             android:name="com.xrtech.xrmirroring.SenderActivity"
             android:configChanges="orientation|screenSize|screenLayout|fontScale|locale|mcc|mnc|touchscreen|navigation|uiMode|density"
             android:exported="false"
             android:launchMode="singleTop">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>

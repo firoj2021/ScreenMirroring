@@ -13,7 +13,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
 import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -115,6 +118,7 @@ public class SenderActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void startProjection() {

@@ -10,8 +10,12 @@ object AppSettings {
 
     //during run to the mobile device::client device
     //set isHostApp = false
-    var isHostApp = false
+    //var isHostApp = false
     //use SenderActivity to the manifest
+
+
+
+    var isHostApp = true //Set true when run on vuzix as host & Set false when run on mobile device as client
 
     val KEY_DEVICE_ID = "dev_id"
     val KEY_QR_CODE_VALIDITY = "qrvalid_till"

@@ -5,7 +5,7 @@ import com.xrtech.xrmirroring.enums.ApiEnvironment
 object ApiConstants {
 
     //Change during build apk
-    val environment: ApiEnvironment = ApiEnvironment.PRODUCTION
+    val environment: ApiEnvironment = ApiEnvironment.DEVELOPMENT
 
     //const val CLIENT_ID = 2
     //const val CLIENT_ID = "5614" //prod
